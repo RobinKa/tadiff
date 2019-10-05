@@ -1,11 +1,13 @@
 {
   "name": "tadiff",
-  "version": "0.0.1",
+  "version": "0.0.1d",
   "description": "Numeric and symbolic automatic differentation",
   "dependencies": {
     "@types/mathjs": "^6.0.2",
     "mathjs": "^6.2.2"
   },
+  "main": "index.js",
+  "types": "index.d.ts",
   "devDependencies": {
     "@types/chai": "^4.2.3",
     "@types/mocha": "^5.2.7",
@@ -16,8 +18,13 @@
   },
   "scripts": {
     "test": "mocha -r ts-node/register test/*.ts",
-    "build": "tsc"
+    "build": "tsc -p ./ts",
+    "pub": "npm run build && node prepublish.js && npm publish js"
   },
   "author": "Robin 'Tora' Kahlow",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RobinKa/tadiff.git"
+  }
 }

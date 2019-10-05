@@ -1,6 +1,6 @@
-import { parseExpression } from "../dist/parser"
-import * as e from "../dist/expressions.js"
-import { getAllDerivatives, getAllVariables, getDerivativeForExpression } from "../dist/operations.js"
+import { parseExpression } from "../ts/parser"
+import * as e from "../ts/expressions"
+import { getAllDerivatives, getAllVariables, getDerivativeForExpression } from "../ts/operations"
 
 const parsedExpr = parseExpression("(m1*2*((p3*cos(q3))*(p2*cos(q2)) - l1*p1*((p2*cos(q2)) + (p3*cos(q3)))) + m1*(p2*p2*(cos(q2)*cos(q2)) + p3*p3*(cos(q3)*cos(q3)) + l1*p1*l1*p1) + ((2 - (cos(q2)*cos(q2)) - (cos(q3)*cos(q3)))*m1 + M)*(p2*p2 + p3*p3))/(2*l1*l1*m1*((2 - (cos(q2)*cos(q2)) - (cos(q3)*cos(q3)))*m1 + M)) - g*(l1*m1*cos(q2) + l2*m2*cos(q3))")
 console.log(`H: ${parsedExpr.evaluateToString()}`)
