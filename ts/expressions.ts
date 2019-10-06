@@ -119,7 +119,7 @@ export class Subtract implements Expression {
         yield (dOutput: Expression) => dOutput
 
         // d(a - b) / db = -1
-        yield (dOutput: Expression) => new Multiply(new Constant(-1), dOutput)
+        yield (dOutput: Expression) => new Negate(dOutput)
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} - ${this.b.evaluateToString()})`
@@ -164,10 +164,10 @@ export class Divide implements Expression {
 
     *getDependencyDerivatives(): IterableIterator<GradFunction> {
         // d(a / b) / da = 1 / b
-        yield (dOutput: Expression) => new Multiply(new Divide(new Constant(1), this.b), dOutput)
+        yield (dOutput: Expression) => new Divide(dOutput, this.b)
 
         // d(a * b) / db = -a / b^2
-        yield (dOutput: Expression) => new Multiply(new Divide(new Multiply(new Constant(-1), this.a), new Multiply(this.b, this.b)), dOutput)
+        yield (dOutput: Expression) => new Multiply(new Divide(new Negate(this.a), new Power(this.b, new Constant(2))), dOutput)
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} / ${this.b.evaluateToString()})`
@@ -207,7 +207,7 @@ export class Cos implements Expression {
 
     *getDependencyDerivatives(): IterableIterator<GradFunction> {
         // d(cos(a)) / da = -sin(a)
-        yield (dOutput: Expression) => new Multiply(new Multiply(new Constant(-1), new Sin(this.a)), dOutput)
+        yield (dOutput: Expression) => new Multiply(new Negate(new Sin(this.a)), dOutput)
     }
 
     evaluateToString = () => `cos(${this.a.evaluateToString()})`
@@ -227,7 +227,7 @@ export class Log implements Expression {
 
     *getDependencyDerivatives(): IterableIterator<GradFunction> {
         // d(ln(a)) / da = 1 / a
-        yield (dOutput: Expression) => new Multiply(new Divide(new Constant(1), this.a), dOutput)
+        yield (dOutput: Expression) => new Divide(dOutput, this.a)
     }
 
     evaluateToString = () => `log(${this.a.evaluateToString()})`
@@ -271,7 +271,7 @@ export class Negate implements Expression {
 
     *getDependencyDerivatives(): IterableIterator<GradFunction> {
         // d(-a) / da = -1
-        yield (dOutput: Expression) => new Multiply(new Constant(-1), dOutput)
+        yield (dOutput: Expression) => new Negate(dOutput)
     }
 
     evaluateToString = () => `(-${this.a.evaluateToString()})`
