@@ -64,3 +64,9 @@ export function parseExpression(expressionString: string) {
     const rootNode = mathjs.simplify(mathjs.parse(expressionString))
     return nodeToExpression(rootNode, {})
 }
+
+export function expressionToNode(expression: expr.Expression) {
+    const parsed = mathjs.parse(expression.evaluateToString())
+    const simplified = mathjs.simplify(parsed)
+    return simplified
+}

@@ -1,4 +1,5 @@
-import { Expression, Add, Constant, Variable } from "./expressions"
+import { Expression, Add, Constant, Variable, EvaluationContext } from "./expressions"
+import { expressionToNode } from "./parser"
 
 export function* getAllDerivatives(output: Expression, gradOutput: Expression): IterableIterator<{ expression: Expression, derivative: Expression }> {
     yield { expression: output, derivative: gradOutput }
@@ -47,4 +48,9 @@ export function getAllVariables(output: Expression) {
     })
 
     return variables
+}
+
+export function compileExpression(expression: Expression): (context: EvaluationContext) => number {
+    const compiled = expressionToNode(expression).compile()
+    return context => compiled.evaluate(context.variableValues)
 }
