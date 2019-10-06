@@ -26,7 +26,7 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
         } else {
             switch (node.op) {
                 case "-":
-                    return new expr.Multiply(new expr.Constant(-1), exprA)
+                    return new expr.Negate(exprA)
                 default:
                     throw new Error("Unknown unary operator " + node.op)
             }

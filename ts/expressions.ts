@@ -259,3 +259,23 @@ export class Power implements Expression {
 
     breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
+
+export class Negate implements Expression {
+    constructor(readonly a: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(-a) / da = -1
+        yield (dOutput: Expression) => new Multiply(new Constant(-1), dOutput)
+    }
+
+    evaluateToString = () => `(-${this.a.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => -this.a.evaluate(context)
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}
