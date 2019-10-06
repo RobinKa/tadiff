@@ -1,6 +1,6 @@
 {
   "name": "tadiff",
-  "version": "0.0.1d",
+  "version": "0.0.2",
   "description": "Numeric and symbolic automatic differentation",
   "dependencies": {
     "@types/mathjs": "^6.0.2",
