@@ -19,10 +19,7 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
                 case "/":
                     return new expr.Divide(exprA, exprB)
                 case "^":
-                    if (node.args[1].isConstantNode && node.args[1].value === 2) {
-                        return new expr.Multiply(exprA, exprA)
-                    }
-                    throw new Error("Can't handle powers that aren't 2")
+                    return new expr.Power(exprA, exprB)
                 default:
                     throw new Error("Unknown binary operator " + node.op)
             }
@@ -49,6 +46,10 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
                 return new expr.Sin(exprA)
             case "cos":
                 return new expr.Cos(exprA)
+            case "log":
+                return new expr.Log(exprA)
+            case "sqrt":
+                return new expr.Power(exprA, new expr.Constant(0.5))
             default:
                 throw new Error("Unknown function " + fn.name)
         }

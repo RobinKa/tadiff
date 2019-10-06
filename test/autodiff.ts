@@ -21,3 +21,26 @@ console.log(`dH/dp2: ${derivativeP2.evaluateToString()}`)
 
 const derivativeP3 = getDerivativeForExpression(variables["p3"], getAllDerivatives(parsedExpr, new e.Constant(1)))
 console.log(`dH/dp3: ${derivativeP3.evaluateToString()}`)
+
+
+
+
+const parsedExpr2 = parseExpression("sqrt(a^b) * log(b)")
+console.log("parsedExpr2: " + parsedExpr2.evaluateToString())
+
+const variables2 = getAllVariables(parsedExpr2)
+
+const context2 = {
+    variableValues: {
+        "a": 2,
+        "b": 3
+    }
+}
+
+const derivativeA = getDerivativeForExpression(variables2["a"], getAllDerivatives(parsedExpr2, new e.Constant(1)))
+console.log("d parsedExpr2 / d a: " + derivativeA.evaluateToString())
+console.log("a=2, b=3; d parsedExpr2 / d a: " + derivativeA.evaluate(context2))
+
+const derivativeB = getDerivativeForExpression(variables2["b"], getAllDerivatives(parsedExpr2, new e.Constant(1)))
+console.log("d parsedExpr2 / d b: " + derivativeB.evaluateToString())
+console.log("a=2, b=3; d parsedExpr2 / d b: " + derivativeB.evaluate(context2))

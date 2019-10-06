@@ -215,3 +215,47 @@ export class Cos implements Expression {
 
     breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
+
+export class Log implements Expression {
+    constructor(readonly a: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(ln(a)) / da = 1 / a
+        yield (dOutput: Expression) => new Multiply(new Divide(new Constant(1), this.a), dOutput)
+    }
+
+    evaluateToString = () => `log(${this.a.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => Math.log(this.a.evaluate(context))
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}
+
+export class Power implements Expression {
+    constructor(readonly a: Expression, readonly b: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+        yield this.b
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(a^b) / da = b * a^(b - 1)
+        yield (dOutput: Expression) => new Multiply(new Multiply(this.b, new Power(this.a, new Subtract(this.b, new Constant(1)))), dOutput)
+
+        // d(a^b) / db = a^b * log(a)
+        yield (dOutput: Expression) => new Multiply(new Multiply(new Power(this.a, this.b), new Log(this.a)), dOutput)
+    }
+
+    evaluateToString = () => `(${this.a.evaluateToString()} ^ ${this.b.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => Math.pow(this.a.evaluate(context), this.b.evaluate(context))
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}
