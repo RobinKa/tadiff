@@ -41,7 +41,7 @@ export function getDerivativeForExpression(expression: Expression, derivatives: 
 export function getAllVariables(output: Expression) {
     const variables: { [name: string]: Variable } = {}
 
-    output.breadthFirst(expr => {
+    traverseBreadthFirst(output, expr => {
         if (expr instanceof Variable) {
             variables[expr.name] = expr
         }
@@ -53,4 +53,22 @@ export function getAllVariables(output: Expression) {
 export function compileExpression(expression: Expression): (context: EvaluationContext) => number {
     const compiled = expressionToNode(expression).compile()
     return context => compiled.evaluate(context.variableValues)
+}
+
+export type ExpressionVisitorFunction = (expr: Expression) => void
+
+export function traverseBreadthFirst(expr: Expression, visit: ExpressionVisitorFunction) {
+    visit(expr)
+
+    for (const dependency of expr.getDependencies()) {
+        traverseBreadthFirst(dependency, visit)
+    }
+}
+
+export function traverseDepthFirst(expr: Expression, visit: ExpressionVisitorFunction) {
+    for (const dependency of expr.getDependencies()) {
+        traverseDepthFirst(dependency, visit)
+    }
+
+    visit(expr)
 }

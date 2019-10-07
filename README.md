@@ -2,6 +2,7 @@
 Reverse-mode automatic differentiation for javascript and typescript. Supports symbolic and numeric modes. Only scalars are supported right now.
 
 [Demo](https://warlock.ai/tadiff-frontend/)
+[GitHub](https://github.com/RobinKa/tadiff)
 
 # Installation
 `npm install tadiff`

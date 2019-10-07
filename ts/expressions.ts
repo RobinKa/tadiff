@@ -9,34 +9,6 @@ export interface Expression {
     getDependencyDerivatives: () => IterableIterator<GradFunction>
     evaluateToString: () => string
     evaluate: (context: EvaluationContext) => number
-
-    breadthFirst: (visit: (expr: Expression) => void) => void
-}
-
-export type UnaryExpression = {
-    a: Expression
-} & Expression
-
-export type BinaryExpression = {
-    a: Expression
-    b: Expression
-} & Expression
-
-export type ExpressionVisitorFunction = (expr: Expression) => void
-
-function breadthFirstFinal(visit: ExpressionVisitorFunction, expr: Expression) {
-    visit(expr)
-}
-
-function breadthFirstUnary(visit: ExpressionVisitorFunction, expr: UnaryExpression) {
-    visit(expr)
-    expr.a.breadthFirst(visit)
-}
-
-function breadthFirstBinary(visit: ExpressionVisitorFunction, expr: BinaryExpression) {
-    visit(expr)
-    expr.a.breadthFirst(visit)
-    expr.b.breadthFirst(visit)
 }
 
 export class Constant implements Expression {
@@ -53,8 +25,6 @@ export class Constant implements Expression {
 
     evaluateToString = () => this.value.toString()
     evaluate = (context: EvaluationContext) => this.value
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstFinal(visit, this)
 }
 
 export class Variable implements Expression {
@@ -76,8 +46,6 @@ export class Variable implements Expression {
         }
         return value
     }
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstFinal(visit, this)
 }
 
 export class Add implements Expression {
@@ -100,8 +68,6 @@ export class Add implements Expression {
 
     evaluateToString = () => `(${this.a.evaluateToString()} + ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => this.a.evaluate(context) + this.b.evaluate(context)
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Subtract implements Expression {
@@ -124,8 +90,6 @@ export class Subtract implements Expression {
 
     evaluateToString = () => `(${this.a.evaluateToString()} - ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => this.a.evaluate(context) - this.b.evaluate(context)
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Multiply implements Expression {
@@ -148,8 +112,6 @@ export class Multiply implements Expression {
 
     evaluateToString = () => `(${this.a.evaluateToString()} * ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => this.a.evaluate(context) * this.b.evaluate(context)
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Divide implements Expression {
@@ -172,8 +134,6 @@ export class Divide implements Expression {
 
     evaluateToString = () => `(${this.a.evaluateToString()} / ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => this.a.evaluate(context) / this.b.evaluate(context)
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Sin implements Expression {
@@ -192,8 +152,6 @@ export class Sin implements Expression {
 
     evaluateToString = () => `sin(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.sin(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Cos implements Expression {
@@ -212,8 +170,6 @@ export class Cos implements Expression {
 
     evaluateToString = () => `cos(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.cos(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Tan implements Expression {
@@ -232,8 +188,6 @@ export class Tan implements Expression {
 
     evaluateToString = () => `tan(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.tan(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Log implements Expression {
@@ -252,8 +206,6 @@ export class Log implements Expression {
 
     evaluateToString = () => `log(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.log(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Power implements Expression {
@@ -276,8 +228,6 @@ export class Power implements Expression {
 
     evaluateToString = () => `(${this.a.evaluateToString()} ^ ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.pow(this.a.evaluate(context), this.b.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Negate implements Expression {
@@ -296,8 +246,6 @@ export class Negate implements Expression {
 
     evaluateToString = () => `(-${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => -this.a.evaluate(context)
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Exp implements Expression {
@@ -316,8 +264,6 @@ export class Exp implements Expression {
 
     evaluateToString = () => `exp(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.exp(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Sign implements Expression {
@@ -338,8 +284,6 @@ export class Sign implements Expression {
 
     evaluateToString = () => `sign(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.sign(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
 export class Abs implements Expression {
@@ -358,6 +302,4 @@ export class Abs implements Expression {
 
     evaluateToString = () => `abs(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.abs(this.a.evaluate(context))
-
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
