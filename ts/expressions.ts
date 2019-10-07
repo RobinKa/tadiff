@@ -257,7 +257,7 @@ export class Power implements Expression {
     evaluateToString = () => `(${this.a.evaluateToString()} ^ ${this.b.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.pow(this.a.evaluate(context), this.b.evaluate(context))
 
-    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstBinary(visit, this)
 }
 
 export class Negate implements Expression {
