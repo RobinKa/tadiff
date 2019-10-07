@@ -45,7 +45,27 @@ const derivativeB = getDerivativeForExpression(variables2["b"], getAllDerivative
 console.log("d parsedExpr2 / d b: " + expressionToNode(derivativeB).toString())
 console.log("a=2, b=3; d parsedExpr2 / d b: " + derivativeB.evaluate(context2))
 
-
-
 const compiledDerivativeB = compileExpression(derivativeB)
 console.log("Compiled a=2, b=3; d parsedExpr2 / d b: " + compiledDerivativeB(context2))
+
+
+
+const context3 = {
+    variableValues: {
+        "a": 2,
+        "b": 3
+    }
+}
+
+const parsedExpr3 = parseExpression("4 * exp(a * b) / b")
+console.log("parsedExpr3: " + expressionToNode(parsedExpr3).toString())
+
+const variables3 = getAllVariables(parsedExpr3)
+
+const derivativeA3 = getDerivativeForExpression(variables3["a"], getAllDerivatives(parsedExpr3, new e.Constant(1)))
+console.log("d parsedExpr3 / d a: " + expressionToNode(derivativeA3).toString())
+console.log("a=2, b=3; d parsedExpr3 / d a: " + derivativeA3.evaluate(context3))
+
+const derivativeB3 = getDerivativeForExpression(variables3["b"], getAllDerivatives(parsedExpr3, new e.Constant(1)))
+console.log("d parsedExpr3 / d b: " + expressionToNode(derivativeB3).toString())
+console.log("a=2, b=3; d parsedExpr3 / d b: " + derivativeB3.evaluate(context3))

@@ -50,6 +50,8 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
                 return new expr.Log(exprA)
             case "sqrt":
                 return new expr.Power(exprA, new expr.Constant(0.5))
+            case "exp":
+                return new expr.Exp(exprA)
             default:
                 throw new Error("Unknown function " + fn.name)
         }
