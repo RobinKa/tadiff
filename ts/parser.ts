@@ -46,6 +46,8 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
                 return new expr.Sin(exprA)
             case "cos":
                 return new expr.Cos(exprA)
+            case "tan":
+                return new expr.Tan(exprA)
             case "log":
                 return new expr.Log(exprA)
             case "sqrt":

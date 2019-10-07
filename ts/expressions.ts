@@ -216,6 +216,26 @@ export class Cos implements Expression {
     breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
 
+export class Tan implements Expression {
+    constructor(readonly a: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(tan(a)) / da = sec(a)^2 = 1 / (cos(a)^2)
+        yield (dOutput: Expression) => new Divide(dOutput, new Power(new Cos(this.a), new Constant(2)))
+    }
+
+    evaluateToString = () => `tan(${this.a.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => Math.tan(this.a.evaluate(context))
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}
+
 export class Log implements Expression {
     constructor(readonly a: Expression) {
 
