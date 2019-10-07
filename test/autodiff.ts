@@ -69,3 +69,11 @@ console.log("a=2, b=3; d parsedExpr3 / d a: " + derivativeA3.evaluate(context3))
 const derivativeB3 = getDerivativeForExpression(variables3["b"], getAllDerivatives(parsedExpr3, new e.Constant(1)))
 console.log("d parsedExpr3 / d b: " + expressionToNode(derivativeB3).toString())
 console.log("a=2, b=3; d parsedExpr3 / d b: " + derivativeB3.evaluate(context3))
+
+
+const parsedExpr4 = parseExpression("D(x, D(x, cos(2 * x)))")
+console.log("parsedExpr4: " + parsedExpr4.evaluateToString())
+
+const variables4 = getAllVariables(parsedExpr4)
+const derivativeX4 = getDerivativeForExpression(variables4["x"], getAllDerivatives(parsedExpr4, new e.Constant(1)))
+console.log("d parsedExpr4 / d x: " + derivativeX4.evaluateToString())

@@ -62,6 +62,12 @@ const derivativeA = tad.getDerivativeForExpression(variables["a"], tad.getAllDer
 const derivativeB = tad.getDerivativeForExpression(variables["b"], tad.getAllDerivatives(expr, new tad.Constant(1)))
 ```
 
+It is also possible to have derivatives within the expression itself.
+
+```ts
+const derivativeExpr = tad.parseExpression("4 * D(x, cos(x * y))")
+```
+
 ## 3. Interop with mathjs
 This library uses mathjs for some of its operations such as parsing and simplification.
 To convert from tadiff expressions to mathjs expressions use `nodeToExpression`. Here we will also have to pass a `tad.Variable` for
@@ -78,6 +84,7 @@ Listed below are the available expressions as both the tad classes and the strin
 | --------- | :---: | :---------------: |
 | Constant number | Constant | a number (eg. `5`, `3.45`) |
 | Variable | Variable | letters (eg. `v`, `px3`) |
+| Differentiation | Derivative | `D(x, f(x))` |
 | Addition | Add | `+` |
 | Subtraction | Subtract | `-` |
 | Multiplication | Multiply | `*` |

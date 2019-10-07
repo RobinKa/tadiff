@@ -58,6 +58,10 @@ function nodeToExpression(node: mathjs.MathNode, variables: { [name: string]: ex
                 return new expr.Abs(exprA)
             case "sign":
                 return new expr.Sign(exprA)
+            case "D": {
+                const exprB = nodeToExpression(node.args[1], variables)
+                return new expr.Derivative(exprA, exprB)
+            }
             default:
                 throw new Error("Unknown function " + fn.name)
         }

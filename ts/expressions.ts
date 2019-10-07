@@ -1,3 +1,5 @@
+import { getAllDerivatives, getDerivativeForExpression } from "./operations"
+
 export type GradFunction = (gradOutput: Expression) => Expression
 
 export type EvaluationContext = {
@@ -128,7 +130,7 @@ export class Divide implements Expression {
         // d(a / b) / da = 1 / b
         yield (dOutput: Expression) => new Divide(dOutput, this.b)
 
-        // d(a * b) / db = -a / b^2
+        // d(a / b) / db = -a / b^2
         yield (dOutput: Expression) => new Multiply(new Divide(new Negate(this.a), new Power(this.b, new Constant(2))), dOutput)
     }
 
@@ -302,4 +304,27 @@ export class Abs implements Expression {
 
     evaluateToString = () => `abs(${this.a.evaluateToString()})`
     evaluate = (context: EvaluationContext) => Math.abs(this.a.evaluate(context))
+}
+
+export class Derivative implements Expression {
+    private derivativeExpr: Expression
+
+    constructor(readonly a: Expression, readonly b: Expression) {
+        this.derivativeExpr = getDerivativeForExpression(a, getAllDerivatives(b, new Constant(1)))
+    }
+
+    *getDependencies() {
+        for (const dependency of this.derivativeExpr.getDependencies()) {
+            yield dependency
+        }
+    }
+
+    *getDependencyDerivatives() {
+        for (const dependencyDerivative of this.derivativeExpr.getDependencyDerivatives()) {
+            yield dependencyDerivative
+        }
+    }
+    
+    evaluateToString = () => this.derivativeExpr.evaluateToString()
+    evaluate = (context: EvaluationContext) =>  this.derivativeExpr.evaluate(context)
 }
