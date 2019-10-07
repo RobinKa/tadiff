@@ -299,3 +299,45 @@ export class Exp implements Expression {
 
     breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
 }
+
+export class Sign implements Expression {
+    constructor(readonly a: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(sign(a)) / da = 0
+        // Technically the derivative at 0 is not defined, but we ignore this
+        // and make it 0 everywhere.
+        yield (dOutput: Expression) => new Constant(0)
+    }
+
+    evaluateToString = () => `sign(${this.a.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => Math.sign(this.a.evaluate(context))
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}
+
+export class Abs implements Expression {
+    constructor(readonly a: Expression) {
+
+    }
+
+    *getDependencies(): IterableIterator<Expression> {
+        yield this.a
+    }
+
+    *getDependencyDerivatives(): IterableIterator<GradFunction> {
+        // d(|a|) / da = sign(a)
+        yield (dOutput: Expression) => new Multiply(new Sign(this.a), dOutput)
+    }
+
+    evaluateToString = () => `abs(${this.a.evaluateToString()})`
+    evaluate = (context: EvaluationContext) => Math.abs(this.a.evaluate(context))
+
+    breadthFirst = (visit: ExpressionVisitorFunction) => breadthFirstUnary(visit, this)
+}

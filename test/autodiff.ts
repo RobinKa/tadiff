@@ -57,7 +57,7 @@ const context3 = {
     }
 }
 
-const parsedExpr3 = parseExpression("4 * exp(a * b) / b")
+const parsedExpr3 = parseExpression("4 * exp(a * b) / abs(b)")
 console.log("parsedExpr3: " + expressionToNode(parsedExpr3).toString())
 
 const variables3 = getAllVariables(parsedExpr3)
