@@ -89,3 +89,11 @@ Listed below are the available expressions as both the tad classes and the strin
 | Sign | Sign | `sign` |
 | Absolute value | Abs | `abs` |
 | Square root | Power(..., 0.5) | `sqrt` |
+
+# Adding new operations
+Creating new operations requires implementing the `tad.Expression` interface. Most importantly the used inputs are passed through the constructor and need
+to be returned from `getDependencies`.
+`evaluate` will need to return the numeric result. `evaluateToString` returns a symbolic string. `getDependencyDerivatives` needs to return
+the derivatives for the dependencies in the same order as `getDependencies`. For more information look at the `expressions.ts` source code as
+most expressions are only around 20 lines long.
+If you do implement a new operation I would be happy to accept a pull request for it.
