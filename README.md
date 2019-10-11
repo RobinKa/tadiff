@@ -70,15 +70,14 @@ const derivativeExpr = tad.parseExpression("4 * D(x, cos(x * y))")
 
 ## 3. Interop with mathjs
 This library uses mathjs for some of its operations such as parsing and simplification.
-To convert from tadiff expressions to mathjs expressions use `nodeToExpression`. Here we will also have to pass a `tad.Variable` for
-each of the variable symbols occuring in the node tree.
-To convert from mathjs expressions to tadiff expressions use `expressionToNode`.
+To convert from tadiff expressions to mathjs expressions use `expressionToNode`.
+To convert from mathjs expressions to tadiff expressions use `nodeToExpression`. Here we will also have to pass a `tad.Variable` for each of the variable symbols occuring in the node tree.
 
 A good use-case of converting to mathjs nodes is to simplify the tadiff expressions as no simplification is done in tadiff. `expressionToNode`
 automatically calls the simplify function.
 
 # Expressions
-Listed below are the available expressions as both the tad classes and the string that can be used for string parsing.
+Listed below are the available expressions as both the tadiff classes and the string that can be used for string parsing.
 
 | Operation | Class | String parsing |
 | --------- | :---: | :---------------: |
@@ -89,7 +88,7 @@ Listed below are the available expressions as both the tad classes and the strin
 | Subtraction | Subtract | `-` |
 | Multiplication | Multiply | `*` |
 | Division | Divide | `/` |
-| Power | Power | `^` |
+| Exponentiation | Power | `^` |
 | Sine | Sin | `sin` |
 | Cosine | Cos | `cos` |
 | Tan | Tan | `tan` |
