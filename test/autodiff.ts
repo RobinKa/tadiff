@@ -77,3 +77,22 @@ console.log("parsedExpr4: " + parsedExpr4.evaluateToString())
 const variables4 = getAllVariables(parsedExpr4)
 const derivativeX4 = getDerivativeForExpression(variables4["x"], getAllDerivatives(parsedExpr4, new e.Constant(1)))
 console.log("d parsedExpr4 / d x: " + derivativeX4.evaluateToString())
+
+const parsedExpr5 = parseExpression("4 * cos(D(b, exp(a * b)) / log(a * tan(b)))")
+const variables5 = getAllVariables(parsedExpr5)
+const expr6 = new e.Derivative(variables5["a"], parsedExpr5)
+const tStartUncached = Date.now()
+for (let i = 0; i < 1000000; i++) {
+    const ctx = { variableValues: { a: i, b: i } }
+    expr6.evaluate(ctx)
+}
+const tEndUncached = Date.now()
+console.log("t uncached: " + (tEndUncached - tStartUncached).toFixed(2) + "ms")
+
+const tStartCached = Date.now()
+const ctx6 = { variableValues: { a: 5, b: 6 } }
+for (let i = 0; i < 1000000; i++) {
+    expr6.evaluate(ctx6)
+}
+const tEndCached = Date.now()
+console.log("t cached: " + (tEndCached - tStartCached).toFixed(2) + "ms")

@@ -6,16 +6,26 @@ export type EvaluationContext = {
     variableValues: { [variableName: string]: number }
 }
 
-export interface Expression {
-    getDependencies: () => IterableIterator<Expression>
-    getDependencyDerivatives: () => IterableIterator<GradFunction>
-    evaluateToString: () => string
-    evaluate: (context: EvaluationContext) => number
+export abstract class Expression {
+    abstract getDependencies(): IterableIterator<Expression>
+    abstract getDependencyDerivatives(): IterableIterator<GradFunction>
+    abstract evaluateToString: () => string
+    protected abstract evaluateImpl: (context: EvaluationContext) => number
+
+    private cachedResult: { context: EvaluationContext | null, result: number } = { context: null, result: 0 }
+    evaluate(context: EvaluationContext) {
+        if (this.cachedResult.context !== context) {
+            this.cachedResult.context = context
+            this.cachedResult.result = this.evaluateImpl(context)
+        }
+        
+        return this.cachedResult.result
+    }
 }
 
-export class Constant implements Expression {
+export class Constant extends Expression {
     constructor(readonly value: number) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -26,12 +36,12 @@ export class Constant implements Expression {
     }
 
     evaluateToString = () => this.value.toString()
-    evaluate = (context: EvaluationContext) => this.value
+    protected evaluateImpl = (context: EvaluationContext) => this.value
 }
 
-export class Variable implements Expression {
+export class Variable extends Expression {
     constructor(readonly name: string) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -41,7 +51,7 @@ export class Variable implements Expression {
     }
 
     evaluateToString = () => this.name.toString()
-    evaluate = (context: EvaluationContext) => {
+    protected evaluateImpl = (context: EvaluationContext) => {
         const value = context.variableValues[this.name]
         if (value === undefined) {
             throw new Error(`No value specified for variable ${this.name}`)
@@ -50,9 +60,9 @@ export class Variable implements Expression {
     }
 }
 
-export class Add implements Expression {
+export class Add extends Expression {
     constructor(readonly a: Expression, readonly b: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -69,12 +79,12 @@ export class Add implements Expression {
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} + ${this.b.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => this.a.evaluate(context) + this.b.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => this.a.evaluate(context) + this.b.evaluate(context)
 }
 
-export class Subtract implements Expression {
+export class Subtract extends Expression {
     constructor(readonly a: Expression, readonly b: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -91,12 +101,12 @@ export class Subtract implements Expression {
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} - ${this.b.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => this.a.evaluate(context) - this.b.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => this.a.evaluate(context) - this.b.evaluate(context)
 }
 
-export class Multiply implements Expression {
+export class Multiply extends Expression {
     constructor(readonly a: Expression, readonly b: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -113,12 +123,12 @@ export class Multiply implements Expression {
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} * ${this.b.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => this.a.evaluate(context) * this.b.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => this.a.evaluate(context) * this.b.evaluate(context)
 }
 
-export class Divide implements Expression {
+export class Divide extends Expression {
     constructor(readonly a: Expression, readonly b: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -135,12 +145,12 @@ export class Divide implements Expression {
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} / ${this.b.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => this.a.evaluate(context) / this.b.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => this.a.evaluate(context) / this.b.evaluate(context)
 }
 
-export class Sin implements Expression {
+export class Sin extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -153,12 +163,12 @@ export class Sin implements Expression {
     }
 
     evaluateToString = () => `sin(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.sin(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.sin(this.a.evaluate(context))
 }
 
-export class Cos implements Expression {
+export class Cos extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -171,12 +181,12 @@ export class Cos implements Expression {
     }
 
     evaluateToString = () => `cos(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.cos(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.cos(this.a.evaluate(context))
 }
 
-export class Tan implements Expression {
+export class Tan extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -189,12 +199,12 @@ export class Tan implements Expression {
     }
 
     evaluateToString = () => `tan(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.tan(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.tan(this.a.evaluate(context))
 }
 
-export class Log implements Expression {
+export class Log extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -207,12 +217,12 @@ export class Log implements Expression {
     }
 
     evaluateToString = () => `log(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.log(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.log(this.a.evaluate(context))
 }
 
-export class Power implements Expression {
+export class Power extends Expression {
     constructor(readonly a: Expression, readonly b: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -229,12 +239,12 @@ export class Power implements Expression {
     }
 
     evaluateToString = () => `(${this.a.evaluateToString()} ^ ${this.b.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.pow(this.a.evaluate(context), this.b.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.pow(this.a.evaluate(context), this.b.evaluate(context))
 }
 
-export class Negate implements Expression {
+export class Negate extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -247,12 +257,12 @@ export class Negate implements Expression {
     }
 
     evaluateToString = () => `(-${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => -this.a.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => -this.a.evaluate(context)
 }
 
-export class Exp implements Expression {
+export class Exp extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -265,12 +275,12 @@ export class Exp implements Expression {
     }
 
     evaluateToString = () => `exp(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.exp(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.exp(this.a.evaluate(context))
 }
 
-export class Sign implements Expression {
+export class Sign extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -285,12 +295,12 @@ export class Sign implements Expression {
     }
 
     evaluateToString = () => `sign(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.sign(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.sign(this.a.evaluate(context))
 }
 
-export class Abs implements Expression {
+export class Abs extends Expression {
     constructor(readonly a: Expression) {
-
+        super()
     }
 
     *getDependencies(): IterableIterator<Expression> {
@@ -303,13 +313,14 @@ export class Abs implements Expression {
     }
 
     evaluateToString = () => `abs(${this.a.evaluateToString()})`
-    evaluate = (context: EvaluationContext) => Math.abs(this.a.evaluate(context))
+    protected evaluateImpl = (context: EvaluationContext) => Math.abs(this.a.evaluate(context))
 }
 
-export class Derivative implements Expression {
+export class Derivative extends Expression {
     private derivativeExpr: Expression
 
     constructor(readonly a: Expression, readonly b: Expression) {
+        super()
         this.derivativeExpr = getDerivativeForExpression(a, getAllDerivatives(b, new Constant(1)))
     }
 
@@ -324,7 +335,7 @@ export class Derivative implements Expression {
             yield dependencyDerivative
         }
     }
-    
+
     evaluateToString = () => this.derivativeExpr.evaluateToString()
-    evaluate = (context: EvaluationContext) =>  this.derivativeExpr.evaluate(context)
+    protected evaluateImpl = (context: EvaluationContext) => this.derivativeExpr.evaluate(context)
 }
