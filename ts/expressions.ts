@@ -35,7 +35,7 @@ export abstract class Expression {
     private cachedResult: { context: EvaluationContext | null, result: number } = { context: null, result: 0 }
     evaluate(context: EvaluationContext) {
         if (!areContextsEqual(this.cachedResult.context, context)) {
-            this.cachedResult.context = { ...context }
+            this.cachedResult.context = { ...context, variableValues: { ...context.variableValues } }
             this.cachedResult.result = this.evaluateImpl(context)
         }
 
