@@ -6,6 +6,26 @@ export type EvaluationContext = {
     variableValues: { [variableName: string]: number }
 }
 
+function areContextsEqual(a: EvaluationContext | null, b: EvaluationContext) {
+    if (a === null) {
+        return false
+    }
+
+    for (const name in a.variableValues) {
+        if (a.variableValues[name] !== b.variableValues[name]) {
+            return false
+        }
+    }
+
+    for (const name in b.variableValues) {
+        if (a.variableValues[name] !== b.variableValues[name]) {
+            return false
+        }
+    }
+
+    return true
+}
+
 export abstract class Expression {
     abstract getDependencies(): IterableIterator<Expression>
     abstract getDependencyDerivatives(): IterableIterator<GradFunction>
@@ -14,11 +34,11 @@ export abstract class Expression {
 
     private cachedResult: { context: EvaluationContext | null, result: number } = { context: null, result: 0 }
     evaluate(context: EvaluationContext) {
-        if (this.cachedResult.context !== context) {
+        if (!areContextsEqual(this.cachedResult.context, context)) {
             this.cachedResult.context = context
             this.cachedResult.result = this.evaluateImpl(context)
         }
-        
+
         return this.cachedResult.result
     }
 }
