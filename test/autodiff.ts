@@ -83,7 +83,7 @@ const variables5 = getAllVariables(parsedExpr5)
 const expr6 = new e.Derivative(variables5["a"], parsedExpr5)
 const tStartUncached = Date.now()
 for (let i = 0; i < 1000000; i++) {
-    const ctx = { variableValues: { a: i, b: i } }
+    const ctx = { variableValues: { a: i, b: i }, noCache: true }
     expr6.evaluate(ctx)
 }
 const tEndUncached = Date.now()

@@ -3,7 +3,8 @@ import { getAllDerivatives, getDerivativeForExpression } from "./operations"
 export type GradFunction = (gradOutput: Expression) => Expression
 
 export type EvaluationContext = {
-    variableValues: { [variableName: string]: number }
+    variableValues: { [variableName: string]: number },
+    noCache?: boolean
 }
 
 function areContextsEqual(a: EvaluationContext | null, b: EvaluationContext) {
@@ -34,6 +35,10 @@ export abstract class Expression {
 
     private cachedResult: { context: EvaluationContext | null, result: number } = { context: null, result: 0 }
     evaluate(context: EvaluationContext) {
+        if (context.noCache) {
+            return this.evaluateImpl(context)
+        }
+
         if (!areContextsEqual(this.cachedResult.context, context)) {
             this.cachedResult.context = { ...context, variableValues: { ...context.variableValues } }
             this.cachedResult.result = this.evaluateImpl(context)
