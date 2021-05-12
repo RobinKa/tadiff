@@ -4,7 +4,7 @@
   "description": "Numeric and symbolic automatic differentation",
   "dependencies": {
     "@types/mathjs": "^6.0.2",
-    "mathjs": "^6.2.2"
+    "mathjs": "^7.5.1"
   },
   "main": "index.js",
   "types": "index.d.ts",
